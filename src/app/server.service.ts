@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, Response } from '@angular/http';
 // import 'rxjs/Rx';
-import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs/Observable';
+import { map, catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 @Injectable()
 export class ServerService {
@@ -16,7 +18,7 @@ export class ServerService {
     }
 
     getServers() {
-        return this.http.get('https://udemy-ng-http-b102f.firebaseio.com/data.json').pipe(map(
+        return this.http.get('https://udemy-ng-http-b102f.firebaseio.com/data').pipe(map(
             (response: Response) => {
                 const data = response.json();
                 for (const server of data) {
@@ -24,6 +26,10 @@ export class ServerService {
                 }
                 return data;
             }
-        ));
+        ), catchError(error => {
+            // console.log(error);
+            return throwError('Something went wrong');
+        })
+        );
     }
 }
